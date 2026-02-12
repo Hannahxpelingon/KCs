@@ -4,14 +4,14 @@
 
 @font-face {
     font-family: 'Red Hat Mono';
-    src: url('../red-hat-mono/RedHatMono[wght].ttf') format('truetype');
+    src: url('red-hat-mono/RedHatMono[wght].ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Red Hat Mono';
-    src: url('../red-hat-mono/RedHatMono-Italic[wght].ttf') format('truetype');
+    src: url('red-hat-mono/RedHatMono-Italic[wght].ttf') format('truetype');
     font-weight: normal;
     font-style: italic;
 }
