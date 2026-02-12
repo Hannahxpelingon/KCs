@@ -67,9 +67,9 @@ body {
     text-decoration: none;
 }
 
-.nav-item:hover {
+/* .nav-item:hover {
     opacity: 0.8;
-}
+} */
 
 .nav-item.active {
     color: #333;
@@ -95,9 +95,9 @@ body {
     font-size: 24px;
 }
 
-.back-button:hover {
+/* .back-button:hover {
     background-color: #d06846;
-}
+} */
 
 .close-button {
     width: 45px;
@@ -134,22 +134,22 @@ body {
     color: white;
 }
 
-.btn-primary:hover {
+/* .btn-primary:hover {
     background-color: #444;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
+} */
 
 .btn-secondary {
     background-color: #e07856;
     color: white;
 }
 
-.btn-secondary:hover {
+/* .btn-secondary:hover {
     background-color: #d06846;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(224, 120, 86, 0.3);
-}
+} */
 
 .btn-disabled {
     background-color: #999;
@@ -501,9 +501,9 @@ body {
     transition: all 0.2s ease;
 }
 
-.addon-item:hover {
+/* .addon-item:hover {
     border-color: #e07856;
-}
+} */
 
 .addon-info {
     display: flex;
@@ -581,9 +581,9 @@ body {
     color: white;
 }
 
-.quantity-button:hover {
+/* .quantity-button:hover {
     transform: scale(1.1);
-}
+} */
 
 .quantity {
     font-size: 20px;
@@ -687,9 +687,9 @@ body {
     cursor: pointer;
 }
 
-.bag-action-link:hover {
+/* .bag-action-link:hover {
     color: #e07856;
-}
+} */
 
 .bag-quantity-controls {
     display: flex;
@@ -764,9 +764,9 @@ body {
     transition: all 0.2s ease;
 }
 
-.radio-option:hover {
+/* .radio-option:hover {
     border-color: #e07856;
-}
+} */
 
 .radio-label {
     font-size: 15px;
@@ -829,9 +829,9 @@ body {
      text-align: center;
 }
 
-.tip-button:hover {
+/* .tip-button:hover {
     border-color: #e07856;
-}
+} */
 
 .order-summary {
      background-color: white;
