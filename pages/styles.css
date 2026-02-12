@@ -612,6 +612,7 @@ body {
 .page-header .page-title {
     flex: 1;
     text-align: center;
+    margin-left: 56px;
 }
 
 .bag-content {
@@ -918,7 +919,10 @@ body {
 }
 
 .order-number {
-    background: #EFC353;
+    background-color: #EFC353;
+    background-image: url('Smoothie_images/fruits-bg.png');
+    background-size: cover;
+    background-position: center;
     border-radius: 12px;
     padding: 40px;
     width: 100%;
@@ -936,10 +940,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-        radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 30px 30px;
-    opacity: 0.3;
+    pointer-events: none;
 }
 
 .order-number-label {
@@ -1051,4 +1052,42 @@ body {
     .container {
         max-width: 100%;
     }
+}
+
+
+/* ========================================= */
+/* HOME2 */
+/* ========================================= */
+
+.order-badge-floating {
+    position: absolute;  /* Change from fixed to absolute */
+    top: 120px;
+    right: 15px;
+    background-color: #8888cc;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 2px 10px rgba(136, 136, 204, 0.4);
+    z-index: 100;
+    transition: all 0.2s ease;
+}
+
+
+.order-number-status {
+    background-color: #ACCD92;
+    background-image: url('Smoothie_images/fruits-bg.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
 }
