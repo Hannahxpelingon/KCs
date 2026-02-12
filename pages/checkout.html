@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - KC</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="page-header">
+            <a href="bag.html" class="back-button">←</a>
+            <h1 class="page-title">CHECKOUT</h1>
+            <div style="width: 45px;"></div>
+        </div>
+
+        <!-- Checkout Form -->
+        <div class="checkout-content">
+            <!-- Pick-up Time -->
+            <div class="form-section">
+                <label class="form-label">PICK-UP TIME</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <div>
+                            <div class="radio-label">ASAP (10-15 minutes)</div>
+                        </div>
+                        <div class="radio-circle"></div>
+                    </div>
+                    <div class="radio-option">
+                        <div>
+                            <div class="radio-label">Schedule for later</div>
+                            <div class="radio-sublabel">Choose a time</div>
+                        </div>
+                        <div class="radio-circle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pick-up Name -->
+            <div class="form-section">
+                <label class="form-label">PICK-UP NAME</label>
+                <input type="text" class="text-input" placeholder="Name here">
+            </div>
+
+            <!-- Payment Method -->
+            <div class="form-section">
+                <label class="form-label">PAYMENT METHOD</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <div class="payment-option">
+                            <span class="payment-icon"></span>
+                            <div class="radio-label">Credit Card</div>
+                        </div>
+                        <div class="radio-circle"></div>
+                    </div>
+                    <div class="radio-option">
+                        <div class="payment-option">
+                            <span class="payment-icon"></span>
+                            <div class="radio-label">Apple Pay</div>
+                        </div>
+                        <div class="radio-circle"></div>
+                    </div>
+                    <div class="radio-option">
+                        <div class="payment-option">
+                            <span class="payment-icon"></span>
+                            <div 
+                            class="radio-label">Venmo</div>
+                        </div>
+                        <div class="radio-circle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tip -->
+            <div class="form-section">
+                <label class="form-label">LEAVE A TIP FOR KC!</label>
+                <div class="tip-buttons">
+                    <div class="tip-button">Custom</div>
+                    <div class="tip-button">15%</div>
+                    <div class="tip-button">20%</div>
+                </div>
+            </div>
+
+           <!-- Order Summary -->
+<div class="order-summary-section">
+    <div class="order-summary">
+        <div class="summary-title">ORDER SUMMARY</div>
+        <div class="summary-item">
+            <span>Custom Smoothie</span>
+            <span>$0</span>
+        </div>
+        <hr class="summary-divider">
+        <div class="summary-item">
+            <span>Subtotal</span>
+            <span>$0</span>
+        </div>
+        <div class="summary-item">
+            <span>Tax</span>
+            <span>$1.00</span>
+        </div>
+        <div class="summary-item">
+            <span>Tip</span>
+            <span>$0</span>
+        </div>
+        <div class="summary-total">
+            <span>Total</span>
+            <span>$0</span>
+        </div>
+    </div>
+    <a href="confirmation.html" class="btn btn-primary btn-full">Confirm and Pay</a>
+</div>
+        </div>
+
+    </div>
+</body>
+</html>
