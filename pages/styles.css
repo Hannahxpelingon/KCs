@@ -31,11 +31,12 @@ body {
     font-family: 'Red Hat Mono', 'Courier New', monospace;
     color: #333;
     background-color: #1e1e1e;
+    width: 100%;
 }
-
 
 .container {
     max-width: 430px;
+    width: 100%;
     margin: 0 auto;
     background-color: #F5F4F2;
     min-height: 100vh;
