@@ -29,9 +29,10 @@
 
 body {
     font-family: 'Red Hat Mono', 'Courier New', monospace;
-    background-color: #f5f5f5;
     color: #333;
+    background-color: #1e1e1e;
 }
+
 
 .container {
     max-width: 430px;
@@ -42,6 +43,7 @@ body {
     flex-direction: column;
     position: relative;
 }
+
 
 /* ========================================= */
 /* NAVIGATION BAR (Bottom) */
@@ -327,6 +329,8 @@ body {
         transparent 0%, 
         transparent 340px, 
         #f9f4f0 340px);
+    
+    background-color: #EDEAE5;
 }
 
 .container.customization::before {
