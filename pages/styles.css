@@ -117,7 +117,7 @@ body {
 
 .btn {
     padding: 18px;
-    border-radius: 25px;
+    border-radius: 100px;
     font-size: 15px;
     font-weight: 600;
     border: none;
@@ -127,6 +127,7 @@ body {
     text-decoration: none;
     display: inline-block;
     text-align: center;
+    font-family: 'Red Hat Mono', 'Courier New', monospace;
 }
 
 .btn-primary {
@@ -792,12 +793,20 @@ body {
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: none;
+    position: relative;
 }
 
-/* .radio-option:hover {
+.radio-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.radio-option.selected {
     border-color: #e07856;
-} */
+}
+
 
 .radio-label {
     font-size: 15px;
@@ -814,6 +823,24 @@ body {
     width: 24px;
     height: 24px;
     border: 2px solid #ddd;
+    border-radius: 50%;
+    position: relative;
+    transition: none;
+}
+
+.radio-option.selected .radio-circle {
+    border-color: #e07856;
+}
+
+.radio-option.selected .radio-circle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background-color: #e07856;
     border-radius: 50%;
 }
 
@@ -840,6 +867,7 @@ body {
 .payment-icon {
     width: 24px;
     height: 24px;
+    font-size: 20px;
 }
 
 .tip-buttons {
@@ -856,13 +884,17 @@ body {
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-     text-align: center;
+    transition: none;
+    text-align: center;
+    font-family: 'Red Hat Mono', 'Courier New', monospace;
 }
 
-/* .tip-button:hover {
+.tip-button.selected {
+    background-color: #e07856;
     border-color: #e07856;
-} */
+    color: white;
+}
+
 
 .order-summary {
      background-color: white;
@@ -921,6 +953,138 @@ body {
 .checkout-button-container .btn {
     width: 100%;
     background-color: #999;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 24px 24px 0 0;
+    padding: 30px 20px 40px;
+    width: 100%;
+    max-width: 430px;
+    position: relative;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e07856;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.modal-location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #e07856;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.time-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.time-option {
+    background-color: white;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.time-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.time-option.selected {
+    border-color: #e07856;
+}
+
+.time-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.time-circle {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    position: relative;
+}
+
+.time-option.selected .time-circle {
+    border-color: #e07856;
+}
+
+.time-option.selected .time-circle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background-color: #e07856;
+    border-radius: 50%;
 }
 
 /* ========================================= */

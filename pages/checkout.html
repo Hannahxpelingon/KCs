@@ -26,19 +26,21 @@
             <div class="form-section">
                 <label class="form-label">PICK-UP TIME</label>
                 <div class="radio-group">
-                    <div class="radio-option">
+                    <label class="radio-option">
+                        <input type="radio" name="pickup-time" class="radio-input" value="asap">
                         <div>
                             <div class="radio-label">ASAP (10-15 minutes)</div>
                         </div>
                         <div class="radio-circle"></div>
-                    </div>
-                    <div class="radio-option">
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="pickup-time" class="radio-input" value="later">
                         <div>
                             <div class="radio-label">Schedule for later</div>
                             <div class="radio-sublabel">Choose a time</div>
                         </div>
                         <div class="radio-circle"></div>
-                    </div>
+                    </label>
                 </div>
             </div>
 
@@ -52,28 +54,30 @@
             <div class="form-section">
                 <label class="form-label">PAYMENT METHOD</label>
                 <div class="radio-group">
-                    <div class="radio-option">
+                    <label class="radio-option">
+                        <input type="radio" name="payment" class="radio-input" value="credit">
                         <div class="payment-option">
                             <span class="payment-icon"></span>
                             <div class="radio-label">Credit Card</div>
                         </div>
                         <div class="radio-circle"></div>
-                    </div>
-                    <div class="radio-option">
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="payment" class="radio-input" value="apple">
                         <div class="payment-option">
                             <span class="payment-icon"></span>
                             <div class="radio-label">Apple Pay</div>
                         </div>
                         <div class="radio-circle"></div>
-                    </div>
-                    <div class="radio-option">
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="payment" class="radio-input" value="venmo">
                         <div class="payment-option">
                             <span class="payment-icon"></span>
-                            <div 
-                            class="radio-label">Venmo</div>
+                            <div class="radio-label">Venmo</div>
                         </div>
                         <div class="radio-circle"></div>
-                    </div>
+                    </label>
                 </div>
             </div>
 
@@ -81,42 +85,84 @@
             <div class="form-section">
                 <label class="form-label">LEAVE A TIP FOR KC!</label>
                 <div class="tip-buttons">
-                    <div class="tip-button">Custom</div>
-                    <div class="tip-button">15%</div>
-                    <div class="tip-button">20%</div>
+                    <button class="tip-button">Custom</button>
+                    <button class="tip-button">15%</button>
+                    <button class="tip-button">20%</button>
                 </div>
             </div>
 
-           <!-- Order Summary -->
-<div class="order-summary-section">
-    <div class="order-summary">
-        <div class="summary-title">ORDER SUMMARY</div>
-        <div class="summary-item">
-            <span>Custom Smoothie</span>
-            <span>$0</span>
-        </div>
-        <hr class="summary-divider">
-        <div class="summary-item">
-            <span>Subtotal</span>
-            <span>$0</span>
-        </div>
-        <div class="summary-item">
-            <span>Tax</span>
-            <span>$1.00</span>
-        </div>
-        <div class="summary-item">
-            <span>Tip</span>
-            <span>$0</span>
-        </div>
-        <div class="summary-total">
-            <span>Total</span>
-            <span>$0</span>
-        </div>
-    </div>
-    <a href="confirmation.html" class="btn btn-primary btn-full">Confirm and Pay</a>
-</div>
+            <!-- Order Summary -->
+            <div class="order-summary-section">
+                <div class="order-summary">
+                    <div class="summary-title">ORDER SUMMARY</div>
+                    <div class="summary-item">
+                        <span>Custom Smoothie</span>
+                        <span>$0</span>
+                    </div>
+                    <hr class="summary-divider">
+                    <div class="summary-item">
+                        <span>Subtotal</span>
+                        <span>$0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Tax</span>
+                        <span>$1.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Tip</span>
+                        <span>$0</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <span>$0</span>
+                    </div>
+                </div>
+                <a href="confirmation.html" class="btn btn-primary btn-full">Confirm and Pay</a>
+            </div>
         </div>
 
+        <!-- Time Selection Modal -->
+        <div class="modal-overlay" id="timeModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeModal">×</button>
+                <h2 class="modal-title">Schedule for later</h2>
+                <div class="modal-location">
+                    <svg class="location-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path fill="#e07856" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    <span>33rd St. & Lancaster Walk</span>
+                </div>
+                <div class="time-options">
+                    <label class="time-option">
+                        <input type="radio" name="time-slot" class="time-radio" value="11:30 AM">
+                        <span class="time-label">11:30 AM</span>
+                        <span class="time-circle"></span>
+                    </label>
+                    <label class="time-option">
+                        <input type="radio" name="time-slot" class="time-radio" value="11:45 AM">
+                        <span class="time-label">11:45 AM</span>
+                        <span class="time-circle"></span>
+                    </label>
+                    <label class="time-option">
+                        <input type="radio" name="time-slot" class="time-radio" value="12:00 PM">
+                        <span class="time-label">12:00 PM</span>
+                        <span class="time-circle"></span>
+                    </label>
+                    <label class="time-option">
+                        <input type="radio" name="time-slot" class="time-radio" value="12:15 PM">
+                        <span class="time-label">12:15 PM</span>
+                        <span class="time-circle"></span>
+                    </label>
+                    <label class="time-option">
+                        <input type="radio" name="time-slot" class="time-radio" value="12:30 PM">
+                        <span class="time-label">12:30 PM</span>
+                        <span class="time-circle"></span>
+                    </label>
+                </div>
+                <button class="btn btn-primary btn-full" id="confirmTime">Confirm</button>
+            </div>
+        </div>
     </div>
+    <script src="checkout.js"></script>
 </body>
 </html>
