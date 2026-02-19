@@ -30,18 +30,21 @@
             <section class="section">
                 <h2 class="section-title">Size</h2>
                 <div class="size-options">
-                    <div class="size-button selected">
+                   <label class="size-button">
+                        <input type="radio" name="size" class="size-radio" value="small">
                         <span class="size-label">Small</span>
                         <span class="size-price">$4.50</span>
-                    </div>
-                    <div class="size-button selected">
+                    </label>
+                    <label class="size-button">
+                        <input type="radio" name="size" class="size-radio" value="medium">
                         <span class="size-label">Medium</span>
                         <span class="size-price">$5.50</span>
-                    </div>
-                    <div class="size-button selected">
+                    </label>
+                    <label class="size-button">
+                        <input type="radio" name="size" class="size-radio" value="large">
                         <span class="size-label">Large</span>
                         <span class="size-price">$6.50</span>
-                    </div>
+                    </label>
                 </div>
             </section>
 
@@ -50,13 +53,41 @@
                 <h2 class="section-title">Ingredients</h2>
                 <p class="section-subtitle">Select up to 3</p>
                 <div class="ingredients-grid">
-                    <div class="ingredient-button selected">Mixed Berry</div>
-                    <div class="ingredient-button selected">Pineapple</div>
-                    <div class="ingredient-button selected">Strawberry</div>
-                    <div class="ingredient-button selected">Mango</div>
-                    <div class="ingredient-button selected">Banana</div>
-                    <div class="ingredient-button selected">Spinach</div>
-                    <div class="ingredient-button selected">Kale</div>
+                    <label class="ingredient-button">
+                        <input type="checkbox" class="ingredient-checkbox">
+                        <img src="ingredients/mixberries.png" alt="Mixed Berry">
+                        <span>Mixed Berry</span>
+                    </label>
+                    <label class="ingredient-button">
+                        <input type="checkbox" class="ingredient-checkbox">
+                        <img src="ingredients/pineapple.png" alt="Pineapple">
+                        <span>Pineapple</span>
+                    </label>
+                    <label class="ingredient-button">
+                        <input type="checkbox" class="ingredient-checkbox">
+                        <img src="ingredients/strawberry.png" alt="Strawberry">
+                        <span>Strawberry</span>
+                    </label>
+                    <label class="ingredient-button">
+                        <input type="checkbox" class="ingredient-checkbox">
+                        <img src="ingredients/mango.png" alt="Mango">
+                        <span>Mango</span>
+                    </label>
+                    <label class="ingredient-button">
+                        <input type="checkbox" class="ingredient-checkbox">
+                        <img src="ingredients/banana.png" alt="Banana">
+                        <span>Banana</span>
+                    </label>
+                    <label class="ingredient-button">
+                        <input type="checkbox" class="ingredient-checkbox">
+                        <img src="ingredients/spinach.png" alt="Spinach">
+                        <span>Spinach</span>
+                    </label>
+                    <label class="ingredient-button">
+                        <input type="checkbox" class="ingredient-checkbox">
+                        <img src="ingredients/kale.png" alt="Kale">
+                        <span>Kale</span>
+                    </label>
                 </div>
             </section>
 
@@ -65,20 +96,22 @@
                 <h2 class="section-title">Add-Ons</h2>
                 <p class="section-subtitle">Optional</p>
                 <div class="addons-list">
-                    <div class="addon-item">
+                    <label class="addon-item">
+                        <input type="checkbox" class="addon-checkbox">
                         <div class="addon-info">
                             <span class="addon-name">Yogurt</span>
                             <span class="addon-price">+$0.50</span>
                         </div>
                         <span class="custom-checkbox"></span>
-                    </div>
-                    <div class="addon-item">
+                    </label>
+                    <label class="addon-item">
+                        <input type="checkbox" class="addon-checkbox">
                         <div class="addon-info">
                             <span class="addon-name">Whey Protein</span>
                             <span class="addon-price">+$0.50</span>
                         </div>
                         <span class="custom-checkbox"></span>
-                    </div>
+                    </label>
                 </div>
             </section>
 
@@ -99,6 +132,7 @@
             </div>
         </div>
     </div>
+    <script src="customize.js"></script>
 </body>
 
 
