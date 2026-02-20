@@ -162,6 +162,45 @@
                 <button class="btn btn-primary btn-full" id="confirmTime">Confirm</button>
             </div>
         </div>
+
+        <!-- Apple Pay Modal -->
+        <div class="modal-overlay" id="applePayModal">
+            <div class="applepay-modal">
+                <div class="applepay-header">
+                    <img src="checkout_images/apple-vector.svg" alt="Apple Pay" class="applepay-logo">
+                    <span class="applepay-text">Pay</span>
+                </div>
+                
+                <div class="payment-card-section">
+                    <div class="payment-card">
+                        <img src="checkout_images/visa-logo.png" alt="Visa" class="card-logo">
+                        <div class="card-info">
+                            <div class="card-name">VISA...</div>
+                            <div class="card-number">xxxxxxxxx</div>
+                        </div>
+                        <div class="card-last-four">xxxx 1234</div>
+                        <span class="chevron-right">›</span>
+                    </div>
+                </div>
+
+                <div class="change-payment-button">
+                    <span>Change Payment Method</span>
+                    <span class="chevron-right">›</span>
+                </div>
+
+                <div class="payment-total-section">
+                    <div class="payment-merchant">Pay KC's Fresh Fruit & Smoothies</div>
+                    <div class="payment-amount">$6.48</div>
+                    <span class="chevron-right">›</span>
+                </div>
+
+                <a href="confirmation.html" class="confirm-section" style="text-decoration: none; color: inherit;">
+                    <img src="checkout_images/confirm-button.png" alt="Confirm" class="confirm-icon">
+                    <div class="confirm-text">Confirm with Side Button</div>
+                </a>
+            </div>
+        </div>
+
     </div>
     <script src="checkout.js"></script>
 </body>

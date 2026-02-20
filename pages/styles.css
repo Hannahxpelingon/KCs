@@ -1095,6 +1095,156 @@ body {
     border-radius: 50%;
 }
 
+/* Apple Pay Modal */
+.applepay-modal {
+    background-color: #e8e8ed;
+    border-radius: 24px 24px 0 0;
+    padding: 20px;
+    width: 100%;
+    max-width: 430px;
+    position: relative;
+    animation: slideUp 0.3s ease-out;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', sans-serif;
+}
+
+.applepay-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 30px;
+    padding-left: 4px;
+}
+
+.applepay-logo {
+    width: 28px;
+    height: 28px;
+}
+
+.applepay-text {
+    font-size: 28px;
+    font-weight: 400;
+    color: #000;
+    letter-spacing: -0.5px;
+}
+
+.payment-card-section {
+    margin-bottom: 10px;
+}
+
+.payment-card {
+    background-color: white;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+.card-logo {
+    width: 45px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.card-info {
+    flex: 1;
+}
+
+.card-name {
+    font-size: 17px;
+    font-weight: 400;
+    color: #000;
+    margin-bottom: 2px;
+    letter-spacing: -0.4px;
+}
+
+.card-number {
+    font-size: 15px;
+    color: #8e8e93;
+    letter-spacing: -0.2px;
+}
+
+.card-last-four {
+    font-size: 17px;
+    color: #000;
+    margin-right: 8px;
+    letter-spacing: -0.4px;
+}
+
+.chevron-right {
+    color: #c7c7cc;
+    font-size: 22px;
+    font-weight: 400;
+}
+
+.change-payment-button {
+    background-color: white;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 17px;
+    color: #000;
+    font-weight: 300;
+    letter-spacing: -0.4px;
+    cursor: pointer;
+}
+
+
+.payment-total-section {
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    position: relative;
+    cursor: pointer;
+}
+
+.payment-merchant {
+    font-size: 15px;
+    color: #8e8e93;
+    letter-spacing: -0.2px;
+    margin-bottom: 8px;
+}
+
+.payment-amount {
+    font-size: 24px;
+    font-weight: 600;
+    color: #000;
+    letter-spacing: -0.5px;
+}
+
+.payment-total-section .chevron-right {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.confirm-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0 20px;
+}
+
+.confirm-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.confirm-text {
+    font-size: 15px;
+    color: #8e8e93;
+    letter-spacing: -0.2px;
+}
+
 /* ========================================= */
 /* CONFIRMATION PAGE */
 /* ========================================= */

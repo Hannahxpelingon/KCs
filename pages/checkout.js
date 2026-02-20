@@ -84,3 +84,51 @@ laterOption.addEventListener('click', () => {
         document.getElementById('timeModal').classList.add('active');
     }
 });
+
+
+// Add to existing checkout.js
+
+// Apple Pay Modal
+const applePayModal = document.getElementById('applePayModal');
+const applePayRadio = document.querySelector('input[value="apple"]');
+const applePayConfirm = document.querySelector('.confirm-section'); // or use an ID if you add one
+
+// Show Apple Pay modal when Apple Pay is selected
+radioInputs.forEach(radio => {
+    radio.addEventListener('change', function() {
+        // Get all radio buttons with the same name
+        const radioGroup = document.querySelectorAll(`input[name="${this.name}"]`);
+        
+        // Remove selected class from all options in this group
+        radioGroup.forEach(r => {
+            r.closest('.radio-option').classList.remove('selected');
+        });
+        
+        // Add selected class to the checked option
+        if (this.checked) {
+            this.closest('.radio-option').classList.add('selected');
+        }
+
+        // Open Apple Pay modal if Apple Pay is selected
+        if (this.name === 'payment' && this.value === 'apple') {
+            applePayModal.classList.add('active');
+        }
+
+        // Open time modal if "Schedule for later" is selected
+        if (this.name === 'pickup-time' && this.value === 'later') {
+            document.getElementById('timeModal').classList.add('active');
+        }
+    });
+});
+
+// Close Apple Pay modal when clicking overlay
+applePayModal.addEventListener('click', (e) => {
+    if (e.target === applePayModal) {
+        applePayModal.classList.remove('active');
+    }
+});
+
+// Close Apple Pay modal when clicking confirm section
+applePayConfirm.addEventListener('click', () => {
+    applePayModal.classList.remove('active');
+});
