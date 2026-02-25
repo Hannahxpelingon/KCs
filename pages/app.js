@@ -58,12 +58,65 @@ function initCustomizePage() {
     const addToBagBtn = document.querySelector('.btn-secondary');
     const orderNowBtn = document.querySelector('.btn-primary');
 
-    if (!sizeRadios.length) return; // Not on customize page
+    if (!sizeRadios.length) return;
 
     let selectedSize = null;
     let quantity = 1;
+    let isEditMode = false;
 
-    // Update total price
+    // Load existing order if returning from bag
+    const existingOrder = Cart.getOrder();
+    if (existingOrder) {
+        isEditMode = true;
+        
+        // Change button text to "Update Bag"
+        if (addToBagBtn) {
+            addToBagBtn.textContent = 'Update Bag';
+        }
+
+        // Restore size
+        if (existingOrder.size) {
+            const sizeRadio = document.querySelector(`.size-radio[value="${existingOrder.size}"]`);
+            if (sizeRadio) {
+                sizeRadio.checked = true;
+                sizeRadio.closest('.size-button').classList.add('selected');
+                selectedSize = existingOrder.size;
+            }
+        }
+
+        // Restore ingredients
+        if (existingOrder.ingredients && existingOrder.ingredients.length > 0) {
+            ingredientCheckboxes.forEach(checkbox => {
+                const ingredientName = checkbox.closest('.ingredient-button').querySelector('span:last-child').textContent;
+                if (existingOrder.ingredients.includes(ingredientName)) {
+                    checkbox.checked = true;
+                    checkbox.closest('.ingredient-button').classList.add('selected');
+                }
+            });
+        }
+
+        // Restore addons
+        if (existingOrder.addons && existingOrder.addons.length > 0) {
+            addonCheckboxes.forEach(checkbox => {
+                const addonName = checkbox.closest('.addon-item').querySelector('.addon-name').textContent;
+                if (existingOrder.addons.includes(addonName)) {
+                    checkbox.checked = true;
+                    checkbox.closest('.addon-item').classList.add('selected');
+                }
+            });
+        }
+
+        // Restore quantity
+        if (existingOrder.quantity) {
+            quantity = existingOrder.quantity;
+            quantityDisplay.textContent = quantity;
+        }
+
+        // Update price display
+        updateTotalPrice();
+    }
+
+    // Update total price function
     function updateTotalPrice() {
         let basePrice = 0;
         
@@ -226,25 +279,16 @@ function initBagPage() {
         if (orderDetails) {
             let detailsHTML = '';
             
-            // Size icons mapping (you can use emoji or leave empty)
-            const sizeIcons = {
-                small: '',
-                medium: '',
-                large: ''
-            };
-            
-            // Ingredient image mapping
             const ingredientImages = {
-                'Mixed Berry': 'ingredients/mixberries.png',
-                'Pineapple': 'ingredients/pineapple.png',
-                'Strawberry': 'ingredients/strawberry.png',
-                'Mango': 'ingredients/mango.png',
-                'Banana': 'ingredients/banana.png',
-                'Spinach': 'ingredients/spinach.png',
-                'Kale': 'ingredients/kale.png'
+                'Mixed Berry': 'Smoothie_images/mixberries.png',
+                'Pineapple': 'Smoothie_images/pineapple.png',
+                'Strawberry': 'Smoothie_images/strawberry.png',
+                'Mango': 'Smoothie_images/mango.png',
+                'Banana': 'Smoothie_images/banana.png',
+                'Spinach': 'Smoothie_images/spinach.png',
+                'Kale': 'Smoothie_images/kale.png'
             };
             
-            // Add size badges (on their own line)
             if (order.size) {
                 detailsHTML += '<div class="detail-section">';
                 const sizeText = order.size.charAt(0).toUpperCase() + order.size.slice(1);
@@ -252,7 +296,6 @@ function initBagPage() {
                 detailsHTML += '</div>';
             }
             
-            // Add ingredient badges with images (on their own line)
             if (order.ingredients && order.ingredients.length > 0) {
                 detailsHTML += '<div class="detail-section">';
                 order.ingredients.forEach(ingredient => {
@@ -269,7 +312,6 @@ function initBagPage() {
                 detailsHTML += '</div>';
             }
             
-            // Add addon badges (on their own line)
             if (order.addons && order.addons.length > 0) {
                 detailsHTML += '<div class="detail-section">';
                 order.addons.forEach(addon => {
@@ -280,6 +322,69 @@ function initBagPage() {
             
             orderDetails.innerHTML = detailsHTML;
         }
+    }
+
+    // Edit button - go back to customize page
+    const editButton = document.querySelector('.bag-action-link[href="customize.html"]');
+    if (editButton) {
+        editButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'customize.html';
+        });
+    }
+
+    // Back button - go back to customize page
+    const backButton = document.querySelector('.back-button[href="customize.html"]');
+    if (backButton) {
+        backButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'customize.html';
+        });
+    }
+
+    // Remove button - show confirmation modal
+    const removeButton = document.querySelector('.bag-action-link[href="bag.html"]');
+    const removeModal = document.getElementById('removeModal');
+    const cancelRemove = document.getElementById('cancelRemove');
+    const confirmRemove = document.getElementById('confirmRemove');
+
+    if (removeButton && removeModal) {
+        removeButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            removeModal.classList.add('active');
+        });
+    }
+
+    // Cancel remove
+    if (cancelRemove && removeModal) {
+        cancelRemove.addEventListener('click', () => {
+            removeModal.classList.remove('active');
+        });
+    }
+
+    // Confirm remove
+    if (confirmRemove) {
+        confirmRemove.addEventListener('click', () => {
+            // Clear the order from localStorage
+            localStorage.removeItem('currentOrder');
+            
+            // Close modal
+            if (removeModal) {
+                removeModal.classList.remove('active');
+            }
+            
+            // Redirect to home page
+            window.location.href = 'index.html';
+        });
+    }
+
+    // Close modal when clicking overlay
+    if (removeModal) {
+        removeModal.addEventListener('click', (e) => {
+            if (e.target === removeModal) {
+                removeModal.classList.remove('active');
+            }
+        });
     }
 }
 
