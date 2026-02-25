@@ -880,6 +880,56 @@ body {
     margin: 0;
 }
 
+
+/* Empty Bag State */
+.empty-bag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.empty-bag-icon-svg {
+    margin-bottom: 20px;
+}
+
+.empty-bag-icon-svg svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.empty-bag-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.empty-bag-message {
+    font-size: 16px;
+    color: #999;
+    margin-bottom: 30px;
+}
+
+.empty-bag-button {
+    background-color: #e07856;
+    color: white;
+    padding: 14px 32px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.empty-bag-button:hover {
+    background-color: #d06846;
+    transform: translateY(-2px);
+}
+
 /* ========================================= */
 /* CHECKOUT PAGE */
 /* ========================================= */
@@ -892,6 +942,7 @@ body {
 
 .form-section {
     margin-bottom: 30px;
+    margin-top: 30px;
 }
 
 .form-label {
@@ -900,6 +951,7 @@ body {
     text-transform: uppercase;
     margin-bottom: 12px;
     display: block;
+    color: #333;
 }
 
 .radio-group {
@@ -994,6 +1046,12 @@ body {
     font-size: 20px;
 }
 
+.payment-icon-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
 .tip-buttons {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1030,7 +1088,7 @@ body {
 }
 
 .order-summary-section {
-    margin-top: 30px;
+    margin-top: 40px;
 }
 
 .summary-title {
@@ -1044,18 +1102,22 @@ body {
 .summary-item {
    display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     font-size: 14px;
 }
 
+.summary-item:last-of-type {
+    margin-bottom: 0;
+}
+
 .summary-divider {
-     border: none;
+    border: none;
     border-top: 1px solid #ddd;
     margin: 20px 0;
 }
 
 .summary-total {
-     display: flex;
+    display: flex;
     justify-content: space-between;
     font-size: 18px;
     font-weight: bold;
@@ -1077,6 +1139,11 @@ body {
 .checkout-button-container .btn {
     width: 100%;
     background-color: #999;
+}
+
+.checkout-button-section {
+    margin-top: 30px;
+    padding-bottom: 20px;
 }
 
 /* Modal Overlay */

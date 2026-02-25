@@ -2,6 +2,10 @@
 // CART MANAGEMENT
 // ============================================
 
+// ============================================
+// CART MANAGEMENT (Updated for multiple items)
+// ============================================
+
 const Cart = {
     prices: {
         small: 4.50,
@@ -10,16 +14,58 @@ const Cart = {
         addon: 0.50
     },
 
-    saveOrder: function(orderData) {
-        localStorage.setItem('currentOrder', JSON.stringify(orderData));
+    // Get all items in cart
+    getItems: function() {
+        const items = localStorage.getItem('cartItems');
+        return items ? JSON.parse(items) : [];
     },
 
-    getOrder: function() {
-        const order = localStorage.getItem('currentOrder');
-        return order ? JSON.parse(order) : null;
+    // Add item to cart
+    addItem: function(item) {
+        const items = this.getItems();
+        items.push(item);
+        localStorage.setItem('cartItems', JSON.stringify(items));
     },
 
-    calculateTotal: function(size, addons, quantity) {
+    // Update item at index
+    updateItem: function(index, item) {
+        const items = this.getItems();
+        if (index >= 0 && index < items.length) {
+            items[index] = item;
+            localStorage.setItem('cartItems', JSON.stringify(items));
+        }
+    },
+
+    // Remove item at index
+    removeItem: function(index) {
+        const items = this.getItems();
+        items.splice(index, 1);
+        localStorage.setItem('cartItems', JSON.stringify(items));
+    },
+
+    // Clear all items
+    clearCart: function() {
+        localStorage.removeItem('cartItems');
+        localStorage.removeItem('editingIndex');
+    },
+
+    // Set which item is being edited
+    setEditingIndex: function(index) {
+        if (index !== null && index !== undefined) {
+            localStorage.setItem('editingIndex', index.toString());
+        } else {
+            localStorage.removeItem('editingIndex');
+        }
+    },
+
+    // Get which item is being edited
+    getEditingIndex: function() {
+        const index = localStorage.getItem('editingIndex');
+        return index !== null ? parseInt(index) : null;
+    },
+
+    // Calculate total for a single item
+    calculateItemTotal: function(size, addons, quantity) {
         let basePrice = 0;
         
         if (size) {
@@ -27,8 +73,19 @@ const Cart = {
         }
         
         const addonPrice = addons.length * this.prices.addon;
-        const subtotal = (basePrice + addonPrice) * quantity;
-        const tax = 1.00;
+        return (basePrice + addonPrice) * quantity;
+    },
+
+    // Calculate cart totals
+    calculateCartTotals: function() {
+        const items = this.getItems();
+        let subtotal = 0;
+        
+        items.forEach(item => {
+            subtotal += this.calculateItemTotal(item.size, item.addons, item.quantity);
+        });
+        
+        const tax = 1.00; // Fixed for now
         const tip = 0;
         
         return {
@@ -39,8 +96,20 @@ const Cart = {
         };
     },
 
+    // Format price for display
     formatPrice: function(amount) {
         return `$${amount.toFixed(2)}`;
+    },
+
+    // Legacy support - keep for backward compatibility
+    saveOrder: function(orderData) {
+        // This is now deprecated but kept for compatibility
+        localStorage.setItem('currentOrder', JSON.stringify(orderData));
+    },
+
+    getOrder: function() {
+        const order = localStorage.getItem('currentOrder');
+        return order ? JSON.parse(order) : null;
     }
 };
 
@@ -62,33 +131,40 @@ function initCustomizePage() {
 
     let selectedSize = null;
     let quantity = 1;
-    let isEditMode = false;
+    let editingIndex = Cart.getEditingIndex();
 
-    // Load existing order if returning from bag
-    const existingOrder = Cart.getOrder();
-    if (existingOrder) {
-        isEditMode = true;
+    // Check if we're editing an existing item
+    if (editingIndex !== null) {
+        const items = Cart.getItems();
+        const editingItem = items[editingIndex];
         
-        // Change button text to "Update Bag"
-        if (addToBagBtn) {
-            addToBagBtn.textContent = 'Update Bag';
-        }
+        if (editingItem) {
+            // Change button text
+            if (addToBagBtn) {
+                addToBagBtn.textContent = 'Update Bag';
+            }
 
+            // Restore the item being edited
+            restoreItem(editingItem);
+        }
+    }
+
+    function restoreItem(item) {
         // Restore size
-        if (existingOrder.size) {
-            const sizeRadio = document.querySelector(`.size-radio[value="${existingOrder.size}"]`);
+        if (item.size) {
+            const sizeRadio = document.querySelector(`.size-radio[value="${item.size}"]`);
             if (sizeRadio) {
                 sizeRadio.checked = true;
                 sizeRadio.closest('.size-button').classList.add('selected');
-                selectedSize = existingOrder.size;
+                selectedSize = item.size;
             }
         }
 
         // Restore ingredients
-        if (existingOrder.ingredients && existingOrder.ingredients.length > 0) {
+        if (item.ingredients && item.ingredients.length > 0) {
             ingredientCheckboxes.forEach(checkbox => {
                 const ingredientName = checkbox.closest('.ingredient-button').querySelector('span:last-child').textContent;
-                if (existingOrder.ingredients.includes(ingredientName)) {
+                if (item.ingredients.includes(ingredientName)) {
                     checkbox.checked = true;
                     checkbox.closest('.ingredient-button').classList.add('selected');
                 }
@@ -96,10 +172,10 @@ function initCustomizePage() {
         }
 
         // Restore addons
-        if (existingOrder.addons && existingOrder.addons.length > 0) {
+        if (item.addons && item.addons.length > 0) {
             addonCheckboxes.forEach(checkbox => {
                 const addonName = checkbox.closest('.addon-item').querySelector('.addon-name').textContent;
-                if (existingOrder.addons.includes(addonName)) {
+                if (item.addons.includes(addonName)) {
                     checkbox.checked = true;
                     checkbox.closest('.addon-item').classList.add('selected');
                 }
@@ -107,16 +183,14 @@ function initCustomizePage() {
         }
 
         // Restore quantity
-        if (existingOrder.quantity) {
-            quantity = existingOrder.quantity;
+        if (item.quantity) {
+            quantity = item.quantity;
             quantityDisplay.textContent = quantity;
         }
 
-        // Update price display
         updateTotalPrice();
     }
 
-    // Update total price function
     function updateTotalPrice() {
         let basePrice = 0;
         
@@ -198,8 +272,7 @@ function initCustomizePage() {
         });
     }
 
-    // Save order function
-    function saveCurrentOrder() {
+    function getCurrentItem() {
         const sizeRadio = document.querySelector('.size-radio:checked');
         const size = sizeRadio ? sizeRadio.value : null;
         
@@ -213,23 +286,38 @@ function initCustomizePage() {
             cb.closest('.addon-item').querySelector('.addon-name').textContent
         );
         
-        const quantity = parseInt(document.querySelector('.quantity').textContent);
-        const pricing = Cart.calculateTotal(size, addons, quantity);
+        const qty = parseInt(document.querySelector('.quantity').textContent);
         
-        Cart.saveOrder({
+        return {
             size: size,
             ingredients: ingredients,
             addons: addons,
-            quantity: quantity,
-            pricing: pricing
-        });
+            quantity: qty
+        };
     }
 
     // Button clicks
     if (addToBagBtn) {
         addToBagBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            saveCurrentOrder();
+            
+            // Validate that a size is selected
+            if (!selectedSize) {
+                alert('Please select a size before adding to bag');
+                return;
+            }
+            
+            const item = getCurrentItem();
+            
+            if (editingIndex !== null) {
+                // Update existing item
+                Cart.updateItem(editingIndex, item);
+                Cart.setEditingIndex(null);
+            } else {
+                // Add new item
+                Cart.addItem(item);
+            }
+            
             window.location.href = 'bag.html';
         });
     }
@@ -237,7 +325,22 @@ function initCustomizePage() {
     if (orderNowBtn) {
         orderNowBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            saveCurrentOrder();
+            
+            // Validate that a size is selected
+            if (!selectedSize) {
+                alert('Please select a size before ordering');
+                return;
+            }
+            
+            const item = getCurrentItem();
+            
+            if (editingIndex !== null) {
+                Cart.updateItem(editingIndex, item);
+                Cart.setEditingIndex(null);
+            } else {
+                Cart.addItem(item);
+            }
+            
             window.location.href = 'checkout.html';
         });
     }
@@ -250,141 +353,216 @@ function initCustomizePage() {
 // ============================================
 
 function initBagPage() {
-    const bagItemName = document.querySelector('.bag-item-name');
-    if (!bagItemName) return;
+    const bagItemsContainer = document.getElementById('bagItemsContainer');
+    if (!bagItemsContainer) return;
 
-    const order = Cart.getOrder();
+    const items = Cart.getItems();
     
-    if (order) {
-        // Update item price
-        const bagItemPrice = document.querySelector('.bag-item-price');
-        if (bagItemPrice) {
-            bagItemPrice.textContent = Cart.formatPrice(order.pricing.subtotal / order.quantity);
+    if (items.length === 0) {
+        // Show empty state
+        bagItemsContainer.innerHTML = `
+           <div class="empty-bag">
+            <div class="empty-bag-icon-svg">
+                <svg width="120" height="120" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Bag body -->
+                    <path d="M40 75 L160 75 L170 180 L30 180 Z" 
+                          stroke="#ddd" 
+                          stroke-width="7" 
+                          fill="none" 
+                          stroke-linejoin="round"/>
+                    
+                    <!-- Single handle -->
+                    <path d="M65 75 C65 45, 135 45, 135 75" 
+                          stroke="#ddd" 
+                          stroke-width="7" 
+                          fill="none" 
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2 class="empty-bag-title">Your Bag is Empty</h2>
+            <p class="empty-bag-message">Order some delicious smoothies!</p>
+            <a href="index.html" class="empty-bag-button">Start Ordering</a>
+        </div>
+        `;
+        
+        // Hide subtotal and buttons
+        const bagSubtotal = document.querySelector('.bag-subtotal');
+        const bagActionButtons = document.querySelector('.bag-action-buttons');
+        if (bagSubtotal) bagSubtotal.style.display = 'none';
+        if (bagActionButtons) bagActionButtons.style.display = 'none';
+        
+        return;
+    }
+
+    // Show subtotal and buttons if hidden
+    const bagSubtotal = document.querySelector('.bag-subtotal');
+    const bagActionButtons = document.querySelector('.bag-action-buttons');
+    if (bagSubtotal) bagSubtotal.style.display = 'flex';
+    if (bagActionButtons) bagActionButtons.style.display = 'grid';
+
+    const ingredientImages = {
+        'Mixed Berry': 'ingredients/mixberries.png',
+        'Pineapple': 'ingredients/pineapple.png',
+        'Strawberry': 'ingredients/strawberry.png',
+        'Mango': 'ingredients/mango.png',
+        'Banana': 'ingredients/banana.png',
+        'Spinach': 'ingredients/spinach.png',
+        'Kale': 'ingredients/kale.png'
+    };
+
+    // Render all items
+    bagItemsContainer.innerHTML = '';
+    items.forEach((item, index) => {
+        const itemTotal = Cart.calculateItemTotal(item.size, item.addons, item.quantity);
+        
+        let detailsHTML = '';
+        
+        if (item.size) {
+            detailsHTML += '<div class="detail-section">';
+            const sizeText = item.size.charAt(0).toUpperCase() + item.size.slice(1);
+            detailsHTML += `<span class="detail-badge detail-size">${sizeText}</span>`;
+            detailsHTML += '</div>';
         }
         
-        // Update quantity
-        const quantityDisplay = document.querySelector('.bag-quantity-controls .quantity');
-        if (quantityDisplay) {
-            quantityDisplay.textContent = order.quantity;
+        if (item.ingredients && item.ingredients.length > 0) {
+            detailsHTML += '<div class="detail-section">';
+            item.ingredients.forEach(ingredient => {
+                const imgSrc = ingredientImages[ingredient] || '';
+                if (imgSrc) {
+                    detailsHTML += `<span class="detail-badge detail-ingredient">
+                        <img src="${imgSrc}" alt="${ingredient}" class="detail-icon">
+                        ${ingredient}
+                    </span>`;
+                } else {
+                    detailsHTML += `<span class="detail-badge detail-ingredient">${ingredient}</span>`;
+                }
+            });
+            detailsHTML += '</div>';
         }
         
-        // Update subtotal
-        const subtotalPrice = document.querySelector('.bag-subtotal span:last-child');
-        if (subtotalPrice) {
-            subtotalPrice.textContent = Cart.formatPrice(order.pricing.subtotal);
+        if (item.addons && item.addons.length > 0) {
+            detailsHTML += '<div class="detail-section">';
+            item.addons.forEach(addon => {
+                detailsHTML += `<span class="detail-badge detail-addon">${addon} (+$0.50)</span>`;
+            });
+            detailsHTML += '</div>';
         }
 
-        // Display order details with badges and images
-        const orderDetails = document.querySelector('.order-details');
-        if (orderDetails) {
-            let detailsHTML = '';
+        const itemHTML = `
+            <div class="bag-item" data-index="${index}">
+                <div class="bag-item-image">
+                    <img src="Smoothie_images/custom.png" alt="Custom Smoothie">
+                </div>
+                <div class="bag-item-details">
+                    <div class="bag-item-header">
+                        <span class="bag-item-name">Custom Smoothie</span>
+                        <span class="bag-item-price">${Cart.formatPrice(itemTotal)}</span>
+                    </div>
+                    <div class="order-details">${detailsHTML}</div>
+                    <div class="bag-item-actions">
+                        <a href="#" class="bag-action-link edit-item" data-index="${index}">Edit</a>
+                        <a href="#" class="bag-action-link remove-item" data-index="${index}">Remove</a>
+                        <div class="bag-quantity-controls">
+                            <button class="quantity-button minus" data-index="${index}">−</button>
+                            <span class="quantity">${item.quantity}</span>
+                            <button class="quantity-button plus" data-index="${index}">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        bagItemsContainer.insertAdjacentHTML('beforeend', itemHTML);
+    });
+
+    // Update subtotal
+    const totals = Cart.calculateCartTotals();
+    const subtotalElement = document.querySelector('.bag-subtotal-amount');
+    if (subtotalElement) {
+        subtotalElement.textContent = Cart.formatPrice(totals.subtotal);
+    }
+
+    // Add event listeners for edit buttons
+    document.querySelectorAll('.edit-item').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const index = parseInt(this.dataset.index);
+            Cart.setEditingIndex(index);
+            window.location.href = 'customize.html';
+        });
+    });
+
+    // Add event listeners for remove buttons
+    document.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const index = parseInt(this.dataset.index);
+            showRemoveModal(index);
+        });
+    });
+
+    // Add event listeners for quantity buttons
+    document.querySelectorAll('.quantity-button.minus').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.dataset.index);
+            const items = Cart.getItems();
+            if (items[index].quantity > 1) {
+                items[index].quantity--;
+                Cart.updateItem(index, items[index]);
+                initBagPage(); // Refresh
+            }
+        });
+    });
+
+    document.querySelectorAll('.quantity-button.plus').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const index = parseInt(this.dataset.index);
+            const items = Cart.getItems();
+            items[index].quantity++;
+            Cart.updateItem(index, items[index]);
+            initBagPage(); // Refresh
+        });
+    });
+
+    // Add more items button - clear editing state
+    const addMoreBtn = document.getElementById('addMoreItems');
+    if (addMoreBtn) {
+        addMoreBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            Cart.setEditingIndex(null);
+            window.location.href = 'customize.html';
+        });
+    }
+
+    // Remove modal functionality
+    function showRemoveModal(index) {
+        const removeModal = document.getElementById('removeModal');
+        if (removeModal) {
+            removeModal.classList.add('active');
             
-            const ingredientImages = {
-                'Mixed Berry': 'Smoothie_images/mixberries.png',
-                'Pineapple': 'Smoothie_images/pineapple.png',
-                'Strawberry': 'Smoothie_images/strawberry.png',
-                'Mango': 'Smoothie_images/mango.png',
-                'Banana': 'Smoothie_images/banana.png',
-                'Spinach': 'Smoothie_images/spinach.png',
-                'Kale': 'Smoothie_images/kale.png'
+            const confirmRemove = document.getElementById('confirmRemove');
+            const cancelRemove = document.getElementById('cancelRemove');
+            
+            // Remove old listeners
+            const newConfirm = confirmRemove.cloneNode(true);
+            confirmRemove.parentNode.replaceChild(newConfirm, confirmRemove);
+            
+            newConfirm.addEventListener('click', () => {
+                Cart.removeItem(index);
+                removeModal.classList.remove('active');
+                initBagPage(); // Refresh to show empty state if needed
+            });
+            
+            cancelRemove.onclick = () => {
+                removeModal.classList.remove('active');
             };
             
-            if (order.size) {
-                detailsHTML += '<div class="detail-section">';
-                const sizeText = order.size.charAt(0).toUpperCase() + order.size.slice(1);
-                detailsHTML += `<span class="detail-badge detail-size">${sizeText}</span>`;
-                detailsHTML += '</div>';
-            }
-            
-            if (order.ingredients && order.ingredients.length > 0) {
-                detailsHTML += '<div class="detail-section">';
-                order.ingredients.forEach(ingredient => {
-                    const imgSrc = ingredientImages[ingredient] || '';
-                    if (imgSrc) {
-                        detailsHTML += `<span class="detail-badge detail-ingredient">
-                            <img src="${imgSrc}" alt="${ingredient}" class="detail-icon">
-                            ${ingredient}
-                        </span>`;
-                    } else {
-                        detailsHTML += `<span class="detail-badge detail-ingredient">${ingredient}</span>`;
-                    }
-                });
-                detailsHTML += '</div>';
-            }
-            
-            if (order.addons && order.addons.length > 0) {
-                detailsHTML += '<div class="detail-section">';
-                order.addons.forEach(addon => {
-                    detailsHTML += `<span class="detail-badge detail-addon">${addon} (+$0.50)</span>`;
-                });
-                detailsHTML += '</div>';
-            }
-            
-            orderDetails.innerHTML = detailsHTML;
+            removeModal.onclick = (e) => {
+                if (e.target === removeModal) {
+                    removeModal.classList.remove('active');
+                }
+            };
         }
-    }
-
-    // Edit button - go back to customize page
-    const editButton = document.querySelector('.bag-action-link[href="customize.html"]');
-    if (editButton) {
-        editButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'customize.html';
-        });
-    }
-
-    // Back button - go back to customize page
-    const backButton = document.querySelector('.back-button[href="customize.html"]');
-    if (backButton) {
-        backButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'customize.html';
-        });
-    }
-
-    // Remove button - show confirmation modal
-    const removeButton = document.querySelector('.bag-action-link[href="bag.html"]');
-    const removeModal = document.getElementById('removeModal');
-    const cancelRemove = document.getElementById('cancelRemove');
-    const confirmRemove = document.getElementById('confirmRemove');
-
-    if (removeButton && removeModal) {
-        removeButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            removeModal.classList.add('active');
-        });
-    }
-
-    // Cancel remove
-    if (cancelRemove && removeModal) {
-        cancelRemove.addEventListener('click', () => {
-            removeModal.classList.remove('active');
-        });
-    }
-
-    // Confirm remove
-    if (confirmRemove) {
-        confirmRemove.addEventListener('click', () => {
-            // Clear the order from localStorage
-            localStorage.removeItem('currentOrder');
-            
-            // Close modal
-            if (removeModal) {
-                removeModal.classList.remove('active');
-            }
-            
-            // Redirect to home page
-            window.location.href = 'index.html';
-        });
-    }
-
-    // Close modal when clicking overlay
-    if (removeModal) {
-        removeModal.addEventListener('click', (e) => {
-            if (e.target === removeModal) {
-                removeModal.classList.remove('active');
-            }
-        });
     }
 }
 
