@@ -85,7 +85,7 @@ const Cart = {
             subtotal += this.calculateItemTotal(item.size, item.addons, item.quantity);
         });
         
-        const tax = 1.00; // Fixed for now
+        const tax = subtotal * 0.08; // 8% of subtotal
         const tip = 0;
         
         return {
@@ -574,61 +574,64 @@ function initCheckoutPage() {
     const radioInputs = document.querySelectorAll('.radio-input');
     if (!radioInputs.length) return; // Not on checkout page
 
-    const order = Cart.getOrder();
+    const items = Cart.getItems();
+    const totals = Cart.calculateCartTotals();
     
-    if (order) {
-        // Update first summary item with quantity and details
+    if (items.length > 0 && totals) {
         const summaryItems = document.querySelectorAll('.summary-item');
+        
+        // Build display for all items
+        let allItemsHTML = '';
+        items.forEach((item, index) => {
+            const itemTotal = Cart.calculateItemTotal(item.size, item.addons, item.quantity);
+            let detailsText = '';
+            
+            if (item.size) {
+                detailsText += item.size.charAt(0).toUpperCase() + item.size.slice(1) + ', ';
+            }
+            
+            if (item.ingredients.length > 0) {
+                detailsText += item.ingredients.join(' ');
+            }
+            
+            allItemsHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: ${index < items.length - 1 ? '15px' : '0'};">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 4px;">${item.quantity}x Custom Smoothie</div>
+                        <div style="font-size: 13px; color: #666; line-height: 1.4;">${detailsText}</div>
+                    </div>
+                    <div style="font-weight: 600; margin-left: 15px; white-space: nowrap;">${Cart.formatPrice(itemTotal)}</div>
+                </div>
+            `;
+        });
+        
+        // Update first summary item with all items
         if (summaryItems.length >= 4) {
-            // First item - Custom Smoothie with quantity
             const firstItem = summaryItems[0];
-            const itemNameDiv = firstItem.querySelector('.summary-item-name');
-            if (itemNameDiv) {
-                itemNameDiv.textContent = `${order.quantity}x Custom Smoothie`;
-            }
-            firstItem.querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.subtotal);
+            firstItem.style.display = 'block';
+            firstItem.innerHTML = allItemsHTML;
             
-            // Display order details below item name
-            const orderDetailsCheckout = firstItem.querySelector('.order-details-checkout');
-            if (orderDetailsCheckout) {
-                let detailsText = '';
-                
-                if (order.size) {
-                    detailsText += order.size.charAt(0).toUpperCase() + order.size.slice(1);
-                }
-                
-                if (order.ingredients.length > 0) {
-                    if (detailsText) detailsText += ', ';
-                    detailsText += order.ingredients.join(' ');
-                }
-                
-                orderDetailsCheckout.textContent = detailsText;
-            }
-            
-            // Update other items
-            summaryItems[1].querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.subtotal);
-            summaryItems[2].querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.tax);
-            summaryItems[3].querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.tip);
+            // Update totals
+            summaryItems[1].querySelector('span:last-child').textContent = Cart.formatPrice(totals.subtotal);
+            summaryItems[2].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tax);
+            summaryItems[3].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tip);
         }
         
         const summaryTotal = document.querySelector('.summary-total span:last-child');
         if (summaryTotal) {
-            summaryTotal.textContent = Cart.formatPrice(order.pricing.total);
+            summaryTotal.textContent = Cart.formatPrice(totals.total);
         }
     }
 
     // Radio button selection handler
     radioInputs.forEach(radio => {
         radio.addEventListener('change', function() {
-            // Get all radio buttons with the same name
             const radioGroup = document.querySelectorAll(`input[name="${this.name}"]`);
             
-            // Remove selected class from all options in this group
             radioGroup.forEach(r => {
                 r.closest('.radio-option').classList.remove('selected');
             });
             
-            // Add selected class to the checked option
             if (this.checked) {
                 this.closest('.radio-option').classList.add('selected');
             }
@@ -651,9 +654,7 @@ function initCheckoutPage() {
     const tipButtons = document.querySelectorAll('.tip-button');
     tipButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Remove selected from all tip buttons
             tipButtons.forEach(btn => btn.classList.remove('selected'));
-            // Add selected to clicked button
             this.classList.add('selected');
         });
     });
@@ -664,7 +665,6 @@ function initCheckoutPage() {
     const confirmTime = document.getElementById('confirmTime');
     const timeRadios = document.querySelectorAll('.time-radio');
 
-    // Handle time slot selection
     if (timeRadios.length) {
         timeRadios.forEach(radio => {
             radio.addEventListener('change', function() {
@@ -678,14 +678,12 @@ function initCheckoutPage() {
         });
     }
 
-    // Close time modal
     if (closeModal) {
         closeModal.addEventListener('click', () => {
             if (timeModal) timeModal.classList.remove('active');
         });
     }
 
-    // Close time modal when clicking overlay
     if (timeModal) {
         timeModal.addEventListener('click', (e) => {
             if (e.target === timeModal) {
@@ -694,13 +692,11 @@ function initCheckoutPage() {
         });
     }
 
-    // Confirm time selection
     if (confirmTime) {
         confirmTime.addEventListener('click', () => {
             const selectedTime = document.querySelector('.time-radio:checked');
             
             if (selectedTime) {
-                // Update the "Schedule for later" label with selected time
                 const laterOption = document.querySelector('input[value="later"]');
                 if (laterOption) {
                     const laterOptionParent = laterOption.closest('.radio-option');
@@ -710,7 +706,6 @@ function initCheckoutPage() {
                     }
                 }
                 
-                // Close modal
                 if (timeModal) timeModal.classList.remove('active');
             }
         });
@@ -720,7 +715,6 @@ function initCheckoutPage() {
     const applePayModal = document.getElementById('applePayModal');
     const applePayConfirm = document.querySelector('.confirm-section');
 
-    // Close Apple Pay modal when clicking overlay
     if (applePayModal) {
         applePayModal.addEventListener('click', (e) => {
             if (e.target === applePayModal) {
@@ -729,7 +723,6 @@ function initCheckoutPage() {
         });
     }
 
-    // Close Apple Pay modal and go to confirmation when clicking confirm
     if (applePayConfirm) {
         applePayConfirm.addEventListener('click', () => {
             if (applePayModal) applePayModal.classList.remove('active');
@@ -746,45 +739,43 @@ function initConfirmationPage() {
     const receiptItems = document.querySelectorAll('.receipt-item');
     if (!receiptItems.length) return;
 
-    const order = Cart.getOrder();
+    const items = Cart.getItems();
+    const totals = Cart.calculateCartTotals();
     
-    if (order) {
-        // Update first receipt item with quantity and name
-        const firstItem = receiptItems[0];
-        const itemNameDiv = firstItem.querySelector('.receipt-item-name');
-        if (!itemNameDiv) {
-            // If no receipt-item-name class, try to find the first div
-            const firstDiv = firstItem.querySelector('div div:first-child');
-            if (firstDiv) {
-                firstDiv.textContent = `${order.quantity}x Custom Smoothie`;
-            }
-        } else {
-            itemNameDiv.textContent = `${order.quantity}x Custom Smoothie`;
-        }
-        
-        firstItem.querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.subtotal);
-        
-        // Display order details (size, ingredients, addons)
-        const orderDetailsConfirmation = firstItem.querySelector('.order-details-confirmation');
-        if (orderDetailsConfirmation) {
+    if (items.length > 0 && totals) {
+        // Build display for all items
+        let allItemsHTML = '';
+        items.forEach((item, index) => {
+            const itemTotal = Cart.calculateItemTotal(item.size, item.addons, item.quantity);
             let detailsText = '';
             
-            if (order.size) {
-                detailsText += order.size.charAt(0).toUpperCase() + order.size.slice(1);
+            if (item.size) {
+                detailsText += item.size.charAt(0).toUpperCase() + item.size.slice(1) + ' ';
             }
             
-            if (order.ingredients.length > 0) {
-                if (detailsText) detailsText += ' ';
-                detailsText += order.ingredients.join(' ');
+            if (item.ingredients.length > 0) {
+                detailsText += item.ingredients.join(' ') + ' ';
             }
             
-            if (order.addons.length > 0) {
-                if (detailsText) detailsText += ' ';
-                detailsText += order.addons.join(' ');
+            if (item.addons.length > 0) {
+                detailsText += item.addons.join(' ');
             }
             
-            orderDetailsConfirmation.textContent = detailsText;
-        }
+            allItemsHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: ${index < items.length - 1 ? '15px' : '0'};">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 4px;">${item.quantity}x Custom Smoothie</div>
+                        <div style="font-size: 13px; color: #666; line-height: 1.4;">${detailsText}</div>
+                    </div>
+                    <div style="font-weight: 600; margin-left: 15px; white-space: nowrap;">${Cart.formatPrice(itemTotal)}</div>
+                </div>
+            `;
+        });
+        
+        // Update first receipt item - replace entire content
+        const firstItem = receiptItems[0];
+        firstItem.style.display = 'block';
+        firstItem.innerHTML = allItemsHTML;
         
         // Find and update subtotal, tax, tip
         const allReceiptItems = document.querySelectorAll('.receipt-item');
@@ -798,18 +789,18 @@ function initConfirmationPage() {
         });
         
         if (subtotalIndex !== -1) {
-            allReceiptItems[subtotalIndex].querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.subtotal);
+            allReceiptItems[subtotalIndex].querySelector('span:last-child').textContent = Cart.formatPrice(totals.subtotal);
             if (allReceiptItems[subtotalIndex + 1]) {
-                allReceiptItems[subtotalIndex + 1].querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.tax);
+                allReceiptItems[subtotalIndex + 1].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tax);
             }
             if (allReceiptItems[subtotalIndex + 2]) {
-                allReceiptItems[subtotalIndex + 2].querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.tip);
+                allReceiptItems[subtotalIndex + 2].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tip);
             }
         }
         
         const receiptTotal = document.querySelector('.receipt-total span:last-child');
         if (receiptTotal) {
-            receiptTotal.textContent = Cart.formatPrice(order.pricing.total);
+            receiptTotal.textContent = Cart.formatPrice(totals.total);
         }
     }
 }
@@ -819,43 +810,46 @@ function initConfirmationPage() {
 // ============================================
 
 function initStatusPage() {
-    const orderDetailsStatus = document.querySelector('.order-details-status');
-    if (!orderDetailsStatus) return; // Not on status page
+    const receiptItems = document.querySelectorAll('.receipt-item');
+    if (!receiptItems.length) return;
 
-    const order = Cart.getOrder();
+    const items = Cart.getItems();
+    const totals = Cart.calculateCartTotals();
     
-    if (order) {
-        // Update first receipt item with quantity and name
-        const receiptItemName = document.querySelector('.receipt-item-name');
-        if (receiptItemName) {
-            receiptItemName.textContent = `${order.quantity}x Custom Smoothie`;
-        }
-        
-        const firstReceiptItem = document.querySelector('.receipt-item');
-        if (firstReceiptItem) {
-            firstReceiptItem.querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.subtotal);
-        }
-        
-        // Display order details (size, ingredients, addons)
-        if (orderDetailsStatus) {
+    if (items.length > 0 && totals) {
+        // Build display for all items
+        let allItemsHTML = '';
+        items.forEach((item, index) => {
+            const itemTotal = Cart.calculateItemTotal(item.size, item.addons, item.quantity);
             let detailsText = '';
             
-            if (order.size) {
-                detailsText += order.size.charAt(0).toUpperCase() + order.size.slice(1);
+            if (item.size) {
+                detailsText += item.size.charAt(0).toUpperCase() + item.size.slice(1) + ' ';
             }
             
-            if (order.ingredients.length > 0) {
-                if (detailsText) detailsText += ' ';
-                detailsText += order.ingredients.join(' ');
+            if (item.ingredients.length > 0) {
+                detailsText += item.ingredients.join(' ') + ' ';
             }
             
-            if (order.addons.length > 0) {
-                if (detailsText) detailsText += ' ';
-                detailsText += order.addons.join(' ');
+            if (item.addons.length > 0) {
+                detailsText += item.addons.join(' ');
             }
             
-            orderDetailsStatus.textContent = detailsText;
-        }
+            allItemsHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: ${index < items.length - 1 ? '15px' : '0'};">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 4px;">${item.quantity}x Custom Smoothie</div>
+                        <div style="font-size: 13px; color: #666; line-height: 1.4;">${detailsText}</div>
+                    </div>
+                    <div style="font-weight: 600; margin-left: 15px; white-space: nowrap;">${Cart.formatPrice(itemTotal)}</div>
+                </div>
+            `;
+        });
+        
+        // Update first receipt item - replace entire content
+        const firstItem = receiptItems[0];
+        firstItem.style.display = 'block';
+        firstItem.innerHTML = allItemsHTML;
         
         // Find and update subtotal, tax, tip
         const allReceiptItems = document.querySelectorAll('.receipt-item');
@@ -869,18 +863,18 @@ function initStatusPage() {
         });
         
         if (subtotalIndex !== -1) {
-            allReceiptItems[subtotalIndex].querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.subtotal);
+            allReceiptItems[subtotalIndex].querySelector('span:last-child').textContent = Cart.formatPrice(totals.subtotal);
             if (allReceiptItems[subtotalIndex + 1]) {
-                allReceiptItems[subtotalIndex + 1].querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.tax);
+                allReceiptItems[subtotalIndex + 1].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tax);
             }
             if (allReceiptItems[subtotalIndex + 2]) {
-                allReceiptItems[subtotalIndex + 2].querySelector('span:last-child').textContent = Cart.formatPrice(order.pricing.tip);
+                allReceiptItems[subtotalIndex + 2].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tip);
             }
         }
         
         const receiptTotal = document.querySelector('.receipt-total span:last-child');
         if (receiptTotal) {
-            receiptTotal.textContent = Cart.formatPrice(order.pricing.total);
+            receiptTotal.textContent = Cart.formatPrice(totals.total);
         }
     }
 }
