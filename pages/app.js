@@ -76,7 +76,19 @@ const Cart = {
         return (basePrice + addonPrice) * quantity;
     },
 
-    // Calculate cart totals
+    // Save tip amount or percentage
+    setTip: function(tipAmount) {
+        localStorage.setItem('cartTip', tipAmount.toString());
+    },
+
+    // Get tip amount
+    getTip: function() {
+        const tip = localStorage.getItem('cartTip');
+        return tip ? parseFloat(tip) : 0;
+    },
+
+
+     // Calculate cart totals
     calculateCartTotals: function() {
         const items = this.getItems();
         let subtotal = 0;
@@ -86,7 +98,27 @@ const Cart = {
         });
         
         const tax = subtotal * 0.08; // 8% of subtotal
-        const tip = 0;
+        const tip = this.getTip();
+        
+        return {
+            subtotal: subtotal,
+            tax: tax,
+            tip: tip,
+            total: subtotal + tax + tip
+        };
+    },
+
+     // Calculate cart totals
+    calculateCartTotals: function() {
+        const items = this.getItems();
+        let subtotal = 0;
+        
+        items.forEach(item => {
+            subtotal += this.calculateItemTotal(item.size, item.addons, item.quantity);
+        });
+        
+        const tax = subtotal * 0.08; // 8% of subtotal
+        const tip = this.getTip();
         
         return {
             subtotal: subtotal,
@@ -111,6 +143,11 @@ const Cart = {
         const order = localStorage.getItem('currentOrder');
         return order ? JSON.parse(order) : null;
     }
+
+
+
+
+
 };
 
 // ============================================
@@ -572,10 +609,26 @@ function initBagPage() {
 
 function initCheckoutPage() {
     const radioInputs = document.querySelectorAll('.radio-input');
-    if (!radioInputs.length) return; // Not on checkout page
+    if (!radioInputs.length) return;
 
     const items = Cart.getItems();
-    const totals = Cart.calculateCartTotals();
+    let totals = Cart.calculateCartTotals();
+    
+    function updateOrderSummary() {
+        totals = Cart.calculateCartTotals();
+        
+        const summaryItems = document.querySelectorAll('.summary-item');
+        if (summaryItems.length >= 4) {
+            summaryItems[1].querySelector('span:last-child').textContent = Cart.formatPrice(totals.subtotal);
+            summaryItems[2].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tax);
+            summaryItems[3].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tip);
+        }
+        
+        const summaryTotal = document.querySelector('.summary-total span:last-child');
+        if (summaryTotal) {
+            summaryTotal.textContent = Cart.formatPrice(totals.total);
+        }
+    }
     
     if (items.length > 0 && totals) {
         const summaryItems = document.querySelectorAll('.summary-item');
@@ -612,16 +665,37 @@ function initCheckoutPage() {
             firstItem.innerHTML = allItemsHTML;
             
             // Update totals
-            summaryItems[1].querySelector('span:last-child').textContent = Cart.formatPrice(totals.subtotal);
-            summaryItems[2].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tax);
-            summaryItems[3].querySelector('span:last-child').textContent = Cart.formatPrice(totals.tip);
-        }
-        
-        const summaryTotal = document.querySelector('.summary-total span:last-child');
-        if (summaryTotal) {
-            summaryTotal.textContent = Cart.formatPrice(totals.total);
+            updateOrderSummary();
         }
     }
+
+    // Tip button selection
+    const tipButtons = document.querySelectorAll('.tip-button');
+    tipButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            tipButtons.forEach(btn => btn.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            const buttonText = this.textContent.trim();
+            let tipAmount = 0;
+            
+            if (buttonText === '15%') {
+                tipAmount = Cart.calculateTipPercentage(15);
+            } else if (buttonText === '20%') {
+                tipAmount = Cart.calculateTipPercentage(20);
+            } else if (buttonText === 'Custom') {
+                const customTip = prompt('Enter custom tip amount:');
+                if (customTip !== null && !isNaN(customTip)) {
+                    tipAmount = parseFloat(customTip);
+                } else {
+                    tipAmount = 0;
+                }
+            }
+            
+            Cart.setTip(tipAmount);
+            updateOrderSummary();
+        });
+    });
 
     // Radio button selection handler
     radioInputs.forEach(radio => {
@@ -636,26 +710,15 @@ function initCheckoutPage() {
                 this.closest('.radio-option').classList.add('selected');
             }
 
-            // Open Apple Pay modal if Apple Pay is selected
             if (this.name === 'payment' && this.value === 'apple') {
                 const applePayModal = document.getElementById('applePayModal');
                 if (applePayModal) applePayModal.classList.add('active');
             }
 
-            // Open time modal if "Schedule for later" is selected
             if (this.name === 'pickup-time' && this.value === 'later') {
                 const timeModal = document.getElementById('timeModal');
                 if (timeModal) timeModal.classList.add('active');
             }
-        });
-    });
-
-    // Tip button selection
-    const tipButtons = document.querySelectorAll('.tip-button');
-    tipButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            tipButtons.forEach(btn => btn.classList.remove('selected'));
-            this.classList.add('selected');
         });
     });
 
