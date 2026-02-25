@@ -219,6 +219,7 @@ body {
     object-fit: cover;
 }
 
+
 .order-badge {
     position: absolute;
     top: 15px;
@@ -765,6 +766,54 @@ body {
     gap: 15px;
 }
 
+.order-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.detail-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.detail-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 2px solid;
+}
+
+.detail-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.detail-size {
+    background-color: white;
+    border-color: #8888cc;
+    color: #8888cc;
+}
+
+.detail-ingredient {
+    background-color: white;
+    border-color: #f4d144;
+    color: #9a8a00;
+}
+
+.detail-addon {
+    background-color: white;
+    border-color: #e07856;
+    color: #e07856;
+}
+
 /* ========================================= */
 /* CHECKOUT PAGE */
 /* ========================================= */
@@ -1245,6 +1294,20 @@ body {
     letter-spacing: -0.2px;
 }
 
+.summary-item-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.order-details-checkout,
+.order-details-confirmation {
+    font-size: 13px;
+    color: #666;
+    margin-top: 2px;
+    line-height: 1.4;
+    font-weight: 400;
+}
 /* ========================================= */
 /* CONFIRMATION PAGE */
 /* ========================================= */
