@@ -142,11 +142,27 @@ const Cart = {
     getOrder: function() {
         const order = localStorage.getItem('currentOrder');
         return order ? JSON.parse(order) : null;
+    },
+
+      // Save pickup name
+    setPickupName: function(name) {
+        localStorage.setItem('pickupName', name);
+    },
+
+    // Get pickup name
+    getPickupName: function() {
+        return localStorage.getItem('pickupName') || '';
+    },
+
+  // Save pickup time
+    setPickupTime: function(time) {
+        localStorage.setItem('pickupTime', time);
+    },
+
+    // Get pickup time
+    getPickupTime: function() {
+        return localStorage.getItem('pickupTime') || 'Choose a time';
     }
-
-
-
-
 
 };
 
@@ -697,6 +713,20 @@ function initCheckoutPage() {
         });
     });
 
+    // Pickup name input
+    const pickupNameInput = document.querySelector('.text-input');
+    if (pickupNameInput) {
+        pickupNameInput.addEventListener('input', function() {
+            Cart.setPickupName(this.value);
+        });
+        
+        // Load existing name if returning to checkout
+        const existingName = Cart.getPickupName();
+        if (existingName) {
+            pickupNameInput.value = existingName;
+        }
+    }
+
     // Radio button selection handler
     radioInputs.forEach(radio => {
         radio.addEventListener('change', function() {
@@ -756,23 +786,60 @@ function initCheckoutPage() {
     }
 
     if (confirmTime) {
-        confirmTime.addEventListener('click', () => {
-            const selectedTime = document.querySelector('.time-radio:checked');
+    confirmTime.addEventListener('click', () => {
+        const selectedTime = document.querySelector('.time-radio:checked');
+        
+        if (selectedTime) {
+            const timeValue = selectedTime.value;
             
-            if (selectedTime) {
-                const laterOption = document.querySelector('input[value="later"]');
-                if (laterOption) {
-                    const laterOptionParent = laterOption.closest('.radio-option');
-                    const sublabel = laterOptionParent.querySelector('.radio-sublabel');
-                    if (sublabel) {
-                        sublabel.textContent = selectedTime.value;
-                    }
+            // Save the pickup time
+            Cart.setPickupTime(timeValue);
+            
+            const laterOption = document.querySelector('input[value="later"]');
+            if (laterOption) {
+                const laterOptionParent = laterOption.closest('.radio-option');
+                const sublabel = laterOptionParent.querySelector('.radio-sublabel');
+                if (sublabel) {
+                    sublabel.textContent = timeValue;
                 }
-                
-                if (timeModal) timeModal.classList.remove('active');
             }
+            
+            if (timeModal) timeModal.classList.remove('active');
+        }
+    });
+
+    
+}
+
+// Also save "ASAP" when selected
+radioInputs.forEach(radio => {
+    radio.addEventListener('change', function() {
+        const radioGroup = document.querySelectorAll(`input[name="${this.name}"]`);
+        
+        radioGroup.forEach(r => {
+            r.closest('.radio-option').classList.remove('selected');
         });
-    }
+        
+        if (this.checked) {
+            this.closest('.radio-option').classList.add('selected');
+        }
+
+        // Save ASAP pickup time
+        if (this.name === 'pickup-time' && this.value === 'asap') {
+            Cart.setPickupTime('ASAP (10-15 minutes)');
+        }
+
+        if (this.name === 'payment' && this.value === 'apple') {
+            const applePayModal = document.getElementById('applePayModal');
+            if (applePayModal) applePayModal.classList.add('active');
+        }
+
+        if (this.name === 'pickup-time' && this.value === 'later') {
+            const timeModal = document.getElementById('timeModal');
+            if (timeModal) timeModal.classList.add('active');
+        }
+    });
+});
 
     // Apple Pay modal functionality
     const applePayModal = document.getElementById('applePayModal');
@@ -804,6 +871,22 @@ function initConfirmationPage() {
 
     const items = Cart.getItems();
     const totals = Cart.calculateCartTotals();
+    const pickupTime = Cart.getPickupTime();
+    const pickupName = Cart.getPickupName();
+    
+    
+    // Update the "Ready by" field
+    const readyTimeElement = document.querySelector('.ready-time');
+    if (readyTimeElement) {
+        readyTimeElement.textContent = `Ready by: ${pickupTime}`;
+    }
+
+     // Update the "Pick up name" field
+    const pickupNameElement = document.querySelector('.pickup-name');
+    if (pickupNameElement) {
+        pickupNameElement.textContent = `Pick up name: ${pickupName}`;
+    }
+    
     
     if (items.length > 0 && totals) {
         // Build display for all items
@@ -878,6 +961,20 @@ function initStatusPage() {
 
     const items = Cart.getItems();
     const totals = Cart.calculateCartTotals();
+    const pickupTime = Cart.getPickupTime();
+    const pickupName = Cart.getPickupName();
+    
+    
+    // Update the "Ready by" field
+    const readyTimeElement = document.querySelector('.ready-time');
+    if (readyTimeElement) {
+        readyTimeElement.textContent = `Ready by: ${pickupTime}`;
+    }
+
+    const pickupNameElement = document.querySelector('.pickup-name');
+    if (pickupNameElement) {
+        pickupNameElement.textContent = `Pick up name: ${pickupName}`;
+    }
     
     if (items.length > 0 && totals) {
         // Build display for all items
