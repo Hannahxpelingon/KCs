@@ -1040,10 +1040,66 @@ function initStatusPage() {
 }
 
 // ============================================
+// HOME PAGE - PRESET ITEMS
+// ============================================
+
+function initHomePage() {
+    const presetItems = document.querySelectorAll('.preset-item');
+    
+    if (!presetItems.length) return; // Not on home page
+    
+    presetItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const itemType = this.dataset.type;
+            let presetItem = {};
+            
+            // Define preset configurations
+            switch(itemType) {
+                case 'fruit-salad':
+                    presetItem = {
+                        size: 'medium',
+                        ingredients: ['Strawberry', 'Pineapple', 'Mango'],
+                        addons: [],
+                        quantity: 1
+                    };
+                    break;
+                    
+                case 'pb-banana':
+                    presetItem = {
+                        size: 'medium',
+                        ingredients: ['Banana'],
+                        addons: ['Peanut Butter'],
+                        quantity: 1
+                    };
+                    break;
+                    
+                case 'taro':
+                    presetItem = {
+                        size: 'large',
+                        ingredients: ['Taro'],
+                        addons: [],
+                        quantity: 1
+                    };
+                    break;
+            }
+            
+            // Add to cart
+            Cart.addItem(presetItem);
+            
+            // Redirect to bag
+            window.location.href = 'bag.html';
+        });
+    });
+}
+
+// ============================================
 // INITIALIZE ON PAGE LOAD
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    initHomePage();
     initCustomizePage();
     initBagPage();
     initCheckoutPage();
