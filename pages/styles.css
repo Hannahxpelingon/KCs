@@ -640,6 +640,58 @@ body {
     gap: 15px;
 }
 
+.size-cup-image {
+    width: 60px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.size-button {
+    background-color: white;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: none;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.size-button input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.size-button.selected {
+    background-color: white;
+    border-color: #e07856;
+}
+
+.size-button.selected .size-label,
+.size-button.selected .size-price {
+    color: #e07856;
+    font-weight: 700;
+}
+
+.size-label {
+    font-size: 15px;
+    color: #333;
+}
+
+.size-price {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
 /* ========================================= */
 /* BAG PAGE */
 /* ========================================= */
