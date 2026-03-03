@@ -70,6 +70,10 @@ body {
     text-decoration: none;
 }
 
+.nav-item.history {
+    cursor: default;
+}
+
 /* .nav-item:hover {
     opacity: 0.8;
 } */
@@ -263,6 +267,22 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     width: 100%;
     margin-bottom: 15px;
+}
+
+.product-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+/* Only apply cursor pointer to custom smoothie link */
+a.product-card {
+    cursor: pointer;
+}
+
+/* Remove cursor pointer from divs */
+div.product-card {
+    cursor: default;
 }
 
 /* .product-card:hover {
